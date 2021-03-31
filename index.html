@@ -1,0 +1,92 @@
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta charset="utf-8"/>
+</head>
+<body>
+
+<style>
+    /* Style the body */
+    body {
+        font-family: Arial;
+        margin: 0;
+        background-image: url('w3css.gif');
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: left;
+    }
+    
+    /* Header/Logo Title */
+    .header {
+        padding: 75px;
+        margin-bottom: 20px;
+        text-align: center;
+        background: #8a9dd1;
+        color: white;
+        font-size: 30px;
+        }
+
+    </style>
+    </head>
+    <body>
+    
+    <div class="header">
+        <img src="https://upload.wikimedia.org/wikipedia/tr/thumb/2/28/Hacettepe_%C3%9Cniversitesi_Logosu.svg/1200px-Hacettepe_%C3%9Cniversitesi_Logosu.svg.png" width="100px" height="140px" />
+        <h1>OSGeo User Interactive Trees Map </h1>
+        <a href="https://github.com/orgs/GISGROUP13">
+            <img border="0" alt="Github" src="http://pngimg.com/uploads/github/github_PNG40.png" width="100" height="100">
+         </a>
+         <h5>DİLAN ATEŞ  -  EMRE DEMİRİZ  -  KAZIM AHMET UZUN  -  PINAR HAZAN  -  ZEYNEP ÜNSAL</h5>
+    </div>
+    
+    
+
+    <div id="mapdiv"></div>
+    <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script>
+
+        $.getJSON('/api/data', function(data) {
+            console.log(data[0].longitude);
+            console.log(data[0].latitude);
+            var veri1=data[0].longitude;
+            var veri2=data[0].latitude;
+        
+
+            map = new OpenLayers.Map("mapdiv");
+            map.addLayer(new OpenLayers.Layer.OSM());
+
+            var point;
+            var length=data.length;
+            //TODO - data haritaya ekleme işlemi
+            for (point = 0; point < data.length; point++) {
+            var lon=data[point].longitude;
+            var lat=data[point].latitude;
+
+            var lonLat = new OpenLayers.LonLat(lon,lat ).transform(new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+                                                                map.getProjectionObject() // to Spherical Mercator Projection
+                                                                );
+            var zoom=15;
+
+        
+            var markers = new OpenLayers.Layer.Markers( "Markers");
+            map.addLayer(markers);
+
+            var icon1 = new OpenLayers.Icon('https://lh3.googleusercontent.com/proxy/RIziQpfGAP9bKaCPJoVQpKIyNS-xDrrT0LWTWsVTsQF5_42QZJXkbyrDhaiX_R0WDXV-zEoGOlSQzx3hHL04pJVnoQKJXqRXsrRClr9opMI_45tV48UIHl9yhDk', size, offset);
+                
+            var marker1 = new OpenLayers.Marker(lonLat, icon1);
+                var size = new OpenLayers.Size(50,50);
+                var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
+                marker1.icon.size = size;
+            marker1.icon.offset = offset;
+
+    
+
+            markers.addMarker(marker1, icon1);
+
+            map.setCenter (lonLat, zoom)
+            }
+        });
+    </script>
+  </body>
+  </html>
